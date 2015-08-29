@@ -80,8 +80,10 @@ fn main() {
 
     let mut to_return: Vec<String> = vec![];
 
+    to_return.push(format!("dhtServerList\\size={}", nodes.len()));
+
     for n in 0..nodes.len() {
-        if let Some(node) = bootstrap(&nodes[n], n) {
+        if let Some(node) = bootstrap(&nodes[n], n + 1) {
             to_return.push(node);
         }
     }
