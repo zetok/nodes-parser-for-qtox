@@ -38,9 +38,11 @@ fn vec_strings(file: &str) -> Result<Vec<String>, ()> {
     let mut content = String::new();
     file.read_to_string(&mut content).unwrap();
 
-    Ok(content.lines().map(|l| l.to_string()).collect())
+    Ok(content.lines()
+        .map(|l| l.trim())
+        .filter(|l| !l.is_empty())
+        .map(|l| l.to_string()).collect())
 }
-
 
 fn bootstrap(string: &String, num: usize) -> Option<String> {
     let split: Vec<&str> = string.split_whitespace().collect();
@@ -78,17 +80,18 @@ fn main() {
         Err(_) => return,
     };
 
-    let mut to_return: Vec<String> = vec![];
-
-    to_return.push(format!("dhtServerList\\size={}", nodes.len()));
+    let mut parsed = vec![];
 
     for n in 0..nodes.len() {
-        if let Some(node) = bootstrap(&nodes[n], n + 1) {
-            to_return.push(node);
+        if let Some(node) = bootstrap(&nodes[n], n) {
+            parsed.push(node);
         }
     }
 
-    for node in to_return {
+    println!("[DHT%20Server]");
+    println!("dhtServerList\\size={}", parsed.len());
+
+    for node in parsed {
         println!("{}", node);
     }
 }
